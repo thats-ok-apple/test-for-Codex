@@ -1,0 +1,560 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>性取向光谱自我探索</title>
+  <meta name="description" content="一个用于理解性取向光谱的自我探索互动网页。结果仅供反思，不是诊断。" />
+  <style>
+    :root {
+      --bg: #070a18;
+      --card: rgba(255,255,255,.07);
+      --card2: rgba(15,23,42,.66);
+      --line: rgba(255,255,255,.13);
+      --text: #f8fafc;
+      --muted: #cbd5e1;
+      --muted2: #94a3b8;
+      --sky: #38bdf8;
+      --violet: #818cf8;
+      --pink: #e879f9;
+      --good: #7dd3fc;
+      --shadow: 0 22px 70px rgba(0,0,0,.36);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 50% -10%, rgba(56,189,248,.28), transparent 34rem),
+        radial-gradient(circle at 90% 5%, rgba(232,121,249,.18), transparent 28rem),
+        linear-gradient(180deg, #070a18 0%, #0f172a 55%, #111827 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+    }
+
+    a { color: inherit; }
+
+    .wrap {
+      width: min(1060px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    header {
+      padding: 56px 0 28px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 28px;
+      align-items: center;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      color: var(--muted);
+      font-size: 14px;
+      backdrop-filter: blur(16px);
+    }
+
+    h1 {
+      margin: 18px 0 0;
+      font-size: clamp(40px, 7vw, 68px);
+      line-height: 1.04;
+      letter-spacing: -.055em;
+    }
+
+    .grad {
+      background: linear-gradient(90deg, var(--sky), var(--violet), var(--pink));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .lead {
+      max-width: 680px;
+      margin: 22px 0 0;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .tags span {
+      padding: 8px 13px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.08);
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background: var(--card);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(22px);
+    }
+
+    .progress-card { padding: 24px; }
+
+    .progress-top {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--sky), var(--violet), var(--pink));
+      box-shadow: 0 12px 30px rgba(56,189,248,.16);
+    }
+
+    .small { color: var(--muted2); font-size: 14px; }
+    .percent { font-size: 28px; font-weight: 800; }
+
+    .bar {
+      height: 12px;
+      margin-top: 20px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(255,255,255,.11);
+    }
+
+    .bar > div {
+      height: 100%;
+      width: 0%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--sky), var(--violet), var(--pink));
+      transition: width .35s ease;
+    }
+
+    .notice {
+      margin-top: 22px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: rgba(2,6,23,.44);
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    main { padding: 18px 0 64px; }
+
+    .question {
+      padding: 24px;
+      margin: 18px 0;
+    }
+
+    .q-head {
+      display: flex;
+      gap: 13px;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    .num {
+      width: 38px;
+      height: 38px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: rgba(255,255,255,.10);
+      font-weight: 800;
+      flex: none;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: -.02em;
+    }
+
+    .hint {
+      margin: 4px 0 0;
+      color: var(--muted2);
+      font-size: 14px;
+    }
+
+    .options {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 11px;
+    }
+
+    .option {
+      width: 100%;
+      padding: 15px 16px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(2,6,23,.44);
+      color: var(--text);
+      text-align: left;
+      font: inherit;
+      cursor: pointer;
+      transition: transform .16s ease, border-color .16s ease, background .16s ease;
+    }
+
+    .option:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255,255,255,.28);
+      background: rgba(255,255,255,.10);
+    }
+
+    .option.active {
+      border-color: rgba(125,211,252,.86);
+      background: rgba(56,189,248,.15);
+      box-shadow: 0 0 0 4px rgba(56,189,248,.07);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    button.primary, button.secondary {
+      height: 48px;
+      padding: 0 20px;
+      border-radius: 17px;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .primary {
+      border: none;
+      color: white;
+      background: linear-gradient(90deg, var(--sky), var(--violet), var(--pink));
+      box-shadow: 0 14px 40px rgba(129,140,248,.22);
+    }
+
+    .primary:disabled {
+      opacity: .42;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .secondary {
+      border: 1px solid var(--line);
+      color: white;
+      background: rgba(255,255,255,.06);
+    }
+
+    .result { padding: 30px; }
+
+    .result-head {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .eyebrow {
+      margin: 0;
+      color: var(--muted2);
+      text-transform: uppercase;
+      letter-spacing: .18em;
+      font-size: 12px;
+    }
+
+    .result-title {
+      margin: 2px 0 0;
+      font-size: clamp(26px, 5vw, 38px);
+      line-height: 1.16;
+      letter-spacing: -.035em;
+    }
+
+    .spectrum-box {
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: rgba(2,6,23,.42);
+    }
+
+    .spectrum-labels {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+      color: var(--muted2);
+      font-size: 12px;
+    }
+
+    .spectrum {
+      position: relative;
+      height: 20px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #38bdf8, #a78bfa, #f0abfc);
+    }
+
+    .dot {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 34px;
+      height: 34px;
+      border: 4px solid white;
+      border-radius: 50%;
+      background: #0f172a;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 12px 30px rgba(0,0,0,.35);
+      transition: left .55s cubic-bezier(.22, 1, .36, 1);
+    }
+
+    .result-copy {
+      margin-top: 20px;
+      padding: 20px;
+      border-radius: 24px;
+      background: rgba(255,255,255,.07);
+    }
+
+    .result-copy .tag {
+      margin: 0 0 8px;
+      color: #bae6fd;
+      font-size: 14px;
+    }
+
+    .result-copy p:last-child {
+      margin: 0;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .tips {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .tip {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: rgba(2,6,23,.35);
+    }
+
+    .tip h3 { margin: 0 0 8px; font-size: 16px; }
+    .tip p { margin: 0; color: var(--muted2); font-size: 14px; }
+
+    .footer-note {
+      margin-top: 18px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: rgba(255,255,255,.05);
+      color: var(--muted2);
+      font-size: 14px;
+    }
+
+    .hidden { display: none; }
+
+    @media (max-width: 820px) {
+      header { padding-top: 36px; }
+      .hero { grid-template-columns: 1fr; }
+      .options { grid-template-columns: 1fr; }
+      .tips { grid-template-columns: 1fr; }
+      .spectrum-labels { font-size: 11px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="wrap">
+    <section class="hero">
+      <div>
+        <div class="pill">✨ 性取向光谱自我探索</div>
+        <h1>不是给你下定义，<span class="grad">而是帮你看见自己的光谱位置。</span></h1>
+        <p class="lead">这个小测试用于帮助你理解浪漫吸引、亲密关系想象和标签舒适度。结果仅供自我反思，不是医学诊断，也不需要立刻告诉任何人。</p>
+        <div class="tags">
+          <span>匿名</span><span>无对错</span><span>可随时重测</span><span>结果仅供参考</span>
+        </div>
+      </div>
+      <aside class="card progress-card" aria-label="测试进度">
+        <div class="progress-top">
+          <div class="icon">🧭</div>
+          <div>
+            <div class="small">当前进度</div>
+            <div class="percent" id="progressText">0%</div>
+          </div>
+        </div>
+        <div class="bar"><div id="progressBar"></div></div>
+        <div class="notice">你可以只把它当成一个“自我观察工具”。没有任何结果比你的真实感受更权威。</div>
+      </aside>
+    </section>
+  </header>
+
+  <main class="wrap">
+    <section id="quiz"></section>
+
+    <div class="actions" id="quizActions">
+      <button class="primary" id="showResult" disabled>查看光谱结果</button>
+      <button class="secondary" id="resetA">重新开始</button>
+    </div>
+
+    <section id="result" class="hidden">
+      <div class="card result">
+        <div class="result-head">
+          <div class="icon">💗</div>
+          <div>
+            <p class="eyebrow">Your spectrum result</p>
+            <h2 class="result-title" id="resultName"></h2>
+          </div>
+        </div>
+
+        <div class="spectrum-box">
+          <div class="spectrum-labels"><span>偏异性</span><span>流动 / 双性 / 泛性</span><span>偏同性</span></div>
+          <div class="spectrum"><div class="dot" id="dot"></div></div>
+        </div>
+
+        <div class="result-copy">
+          <p class="tag" id="resultTag"></p>
+          <p id="resultDescription"></p>
+        </div>
+
+        <div class="tips">
+          <div class="tip"><h3>1. 不急着定论</h3><p>性取向可以被理解为光谱。有些人很稳定，有些人会慢慢变清楚。</p></div>
+          <div class="tip"><h3>2. 区分喜欢和压力</h3><p>外界期待、同伴评价、家庭压力都可能影响你表达答案的方式。</p></div>
+          <div class="tip"><h3>3. 保护隐私和安全</h3><p>你不需要向任何人证明自己。分享前先确认对方足够尊重和安全。</p></div>
+        </div>
+
+        <div class="actions">
+          <button class="primary" id="resetB">再测一次</button>
+          <button class="secondary" id="back">返回修改答案</button>
+        </div>
+      </div>
+
+      <div class="footer-note"><strong>温馨提示：</strong>这个页面适合做成科普型互动网站。它不能替代专业咨询，也不应该被用来强迫别人“测出”某种取向。真正重要的是尊重、边界、隐私和自我接纳。</div>
+    </section>
+  </main>
+
+  <script>
+    const questions = [
+      { id: "romantic_attraction", title: "你更容易对谁产生心动感？", hint: "这里说的是“喜欢、在意、想靠近”的感觉，不是外界期待。", options: [
+        { label: "主要是异性", value: -2 }, { label: "更多是异性，但不绝对", value: -1 }, { label: "不太固定 / 都有可能", value: 0 }, { label: "更多是同性，但不绝对", value: 1 }, { label: "主要是同性", value: 2 }, { label: "目前很少或不确定", value: 0, ace: 1 }
+      ] },
+      { id: "crush_pattern", title: "回想你过去有好感的人，整体更接近哪种模式？", hint: "不用强迫自己回忆得很精确，只看大致趋势。", options: [
+        { label: "几乎都是异性", value: -2 }, { label: "异性更多", value: -1 }, { label: "不同性别都有 / 很难归类", value: 0 }, { label: "同性更多", value: 1 }, { label: "几乎都是同性", value: 2 }, { label: "我几乎没怎么心动过", value: 0, ace: 1 }
+      ] },
+      { id: "future_partner", title: "如果想象未来亲密关系，你觉得哪种更自然？", hint: "只看你内心的自然感，不考虑父母、同学、社会评价。", options: [
+        { label: "和异性在一起更自然", value: -2 }, { label: "偏向异性，但不排除其他可能", value: -1 }, { label: "性别不是最关键的因素", value: 0 }, { label: "偏向同性，但不排除其他可能", value: 1 }, { label: "和同性在一起更自然", value: 2 }, { label: "我不太想进入亲密关系 / 还没想好", value: 0, ace: 1 }
+      ] },
+      { id: "label_comfort", title: "你对某些标签的舒适度如何？", hint: "标签只是工具，不是必须贴上的永久身份。", options: [
+        { label: "“异性恋”最贴近我", value: -2 }, { label: "“异性恋但可能有一点流动性”更贴近我", value: -1 }, { label: "“双性恋 / 泛性恋 / 流动”可能更贴近我", value: 0 }, { label: "“同性恋但可能有一点流动性”更贴近我", value: 1 }, { label: "“同性恋”最贴近我", value: 2 }, { label: "“无性恋 / 灰性恋 / 不确定”可能更贴近我", value: 0, ace: 1 }
+      ] },
+      { id: "pressure_check", title: "如果完全没有外界压力，你的答案会变化吗？", hint: "这一题用来提醒你：安全感会影响自我认知。", options: [
+        { label: "不会，我很确定自己偏异性", value: -2 }, { label: "可能会更开放一点", value: 0 }, { label: "会，我可能会承认自己对不同性别都有感觉", value: 0 }, { label: "会，我可能会更承认自己偏同性", value: 1 }, { label: "不会，我很确定自己偏同性", value: 2 }, { label: "我还没有准备好判断", value: 0, ace: 1 }
+      ] }
+    ];
+
+    const answers = {};
+    const quiz = document.getElementById("quiz");
+    const progressText = document.getElementById("progressText");
+    const progressBar = document.getElementById("progressBar");
+    const showResultButton = document.getElementById("showResult");
+    const resultSection = document.getElementById("result");
+    const quizActions = document.getElementById("quizActions");
+
+    function getResult(avg, aceScore) {
+      if (aceScore >= 3) return { name: "可能更接近：低吸引 / 无性恋或灰性恋光谱", tag: "Asexual / Gray-asexual spectrum", position: 50, description: "你选择了较多“很少心动、不确定、不太想进入亲密关系”的选项。这不代表你一定属于某个标签，但可以了解无性恋、灰性恋、浪漫取向等概念。" };
+      if (avg <= -1.35) return { name: "可能更接近：异性恋光谱", tag: "Mostly heterosexual", position: 8, description: "你的答案整体更偏向对异性产生浪漫吸引。即使如此，人的感受也可能有细微变化，标签只是帮助理解自己的工具。" };
+      if (avg <= -0.45) return { name: "可能更接近：偏异性恋，但有一定流动性", tag: "Heteroflexible", position: 28, description: "你的答案显示你可能更偏向异性，但并不一定完全排除其他可能。可以把它理解成光谱上的偏左区域。" };
+      if (avg < 0.45) return { name: "可能更接近：双性恋 / 泛性恋 / 流动光谱", tag: "Bi / Pan / Fluid spectrum", position: 50, description: "你的答案没有明显固定在某一端，可能说明性别不是你产生好感时唯一或最核心的因素。你可以继续观察自己真实、稳定的感受。" };
+      if (avg < 1.35) return { name: "可能更接近：偏同性恋，但有一定流动性", tag: "Homoflexible", position: 72, description: "你的答案整体更偏向同性，但可能仍保留一些流动性或不确定性。光谱理解比强行二选一更贴近很多人的真实体验。" };
+      return { name: "可能更接近：同性恋光谱", tag: "Mostly homosexual", position: 92, description: "你的答案整体更偏向对同性产生浪漫吸引。这不是缺陷，也不是需要被纠正的事情；它只是自我认知的一部分。" };
+    }
+
+    function updateProgress() {
+      const count = Object.keys(answers).length;
+      const percent = Math.round(count / questions.length * 100);
+      progressText.textContent = percent + "%";
+      progressBar.style.width = percent + "%";
+      showResultButton.disabled = count < questions.length;
+    }
+
+    function renderQuiz() {
+      quiz.innerHTML = questions.map((q, i) => `
+        <article class="card question">
+          <div class="q-head">
+            <div class="num">${i + 1}</div>
+            <div><h2>${q.title}</h2><p class="hint">${q.hint}</p></div>
+          </div>
+          <div class="options">
+            ${q.options.map((o, j) => `<button class="option" data-q="${q.id}" data-i="${j}">${o.label}</button>`).join("")}
+          </div>
+        </article>`).join("");
+
+      document.querySelectorAll(".option").forEach(button => {
+        button.addEventListener("click", () => {
+          const q = questions.find(item => item.id === button.dataset.q);
+          const option = q.options[Number(button.dataset.i)];
+          answers[q.id] = option;
+          document.querySelectorAll(`.option[data-q="${q.id}"]`).forEach(b => b.classList.remove("active"));
+          button.classList.add("active");
+          updateProgress();
+        });
+      });
+    }
+
+    function showResult() {
+      const selected = Object.values(answers);
+      const score = selected.reduce((sum, item) => sum + item.value, 0);
+      const aceScore = selected.reduce((sum, item) => sum + (item.ace || 0), 0);
+      const avg = selected.length ? score / selected.length : 0;
+      const result = getResult(avg, aceScore);
+
+      document.getElementById("resultName").textContent = result.name;
+      document.getElementById("resultTag").textContent = result.tag;
+      document.getElementById("resultDescription").textContent = result.description;
+      document.getElementById("dot").style.left = result.position + "%";
+
+      quiz.classList.add("hidden");
+      quizActions.classList.add("hidden");
+      resultSection.classList.remove("hidden");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function reset() {
+      Object.keys(answers).forEach(key => delete answers[key]);
+      resultSection.classList.add("hidden");
+      quiz.classList.remove("hidden");
+      quizActions.classList.remove("hidden");
+      renderQuiz();
+      updateProgress();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    showResultButton.addEventListener("click", showResult);
+    document.getElementById("resetA").addEventListener("click", reset);
+    document.getElementById("resetB").addEventListener("click", reset);
+    document.getElementById("back").addEventListener("click", () => {
+      resultSection.classList.add("hidden");
+      quiz.classList.remove("hidden");
+      quizActions.classList.remove("hidden");
+      window.scrollTo({ top: quiz.offsetTop - 20, behavior: "smooth" });
+    });
+
+    renderQuiz();
+    updateProgress();
+  </script>
+</body>
+</html>
