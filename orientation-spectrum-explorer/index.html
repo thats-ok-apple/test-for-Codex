@@ -3,137 +3,248 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>性取向光谱自我探索</title>
+  <title>性取向光谱测试</title>
   <meta name="description" content="一个用于理解性取向光谱的自我探索互动网页。结果仅供反思，不是诊断。" />
   <style>
     :root {
       --bg: #070a18;
-      --card: rgba(255,255,255,.07);
-      --card2: rgba(15,23,42,.66);
-      --line: rgba(255,255,255,.13);
+      --card: rgba(255,255,255,.075);
+      --line: rgba(255,255,255,.14);
       --text: #f8fafc;
       --muted: #cbd5e1;
       --muted2: #94a3b8;
-      --sky: #38bdf8;
+      --cyan: #22d3ee;
+      --blue: #60a5fa;
       --violet: #818cf8;
       --pink: #e879f9;
-      --good: #7dd3fc;
-      --shadow: 0 22px 70px rgba(0,0,0,.36);
+      --shadow: 0 24px 80px rgba(0,0,0,.38);
     }
 
     * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
 
     body {
       margin: 0;
       min-height: 100vh;
       color: var(--text);
       background:
-        radial-gradient(circle at 50% -10%, rgba(56,189,248,.28), transparent 34rem),
-        radial-gradient(circle at 90% 5%, rgba(232,121,249,.18), transparent 28rem),
-        linear-gradient(180deg, #070a18 0%, #0f172a 55%, #111827 100%);
+        radial-gradient(circle at 20% 0%, rgba(34,211,238,.24), transparent 28rem),
+        radial-gradient(circle at 90% 14%, rgba(232,121,249,.20), transparent 30rem),
+        linear-gradient(180deg, #070a18 0%, #0f172a 56%, #111827 100%);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
       line-height: 1.6;
+      overflow-x: hidden;
     }
 
-    a { color: inherit; }
+    .blob {
+      position: fixed;
+      z-index: -1;
+      width: 360px;
+      height: 360px;
+      border-radius: 999px;
+      filter: blur(54px);
+      opacity: .28;
+      pointer-events: none;
+      animation: float 12s ease-in-out infinite;
+    }
+
+    .blob.one { left: -120px; top: -90px; background: var(--cyan); }
+    .blob.two { right: -150px; top: 210px; background: var(--pink); animation-duration: 15s; animation-delay: -3s; }
+    .blob.three { left: 36%; bottom: -180px; background: var(--violet); animation-duration: 18s; animation-delay: -7s; }
+
+    @keyframes float {
+      0%, 100% { transform: translate3d(0,0,0) scale(1); }
+      35% { transform: translate3d(54px, 42px, 0) scale(1.14); }
+      70% { transform: translate3d(-28px, 82px, 0) scale(.92); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(22px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes shine {
+      0% { transform: translateX(-120%); }
+      100% { transform: translateX(120%); }
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 0 rgba(34,211,238,0); }
+      50% { box-shadow: 0 0 36px rgba(34,211,238,.26); }
+    }
 
     .wrap {
-      width: min(1060px, calc(100% - 32px));
+      width: min(1120px, calc(100% - 32px));
       margin: 0 auto;
     }
 
-    header {
-      padding: 56px 0 28px;
-    }
+    header { padding: 34px 0 28px; }
 
-    .hero {
-      display: grid;
-      grid-template-columns: 1.15fr .85fr;
-      gap: 28px;
+    .topbar {
+      display: flex;
+      justify-content: space-between;
       align-items: center;
-    }
-
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 9px 14px;
+      gap: 16px;
+      padding: 12px 16px;
       border: 1px solid var(--line);
       border-radius: 999px;
       background: rgba(255,255,255,.06);
-      color: var(--muted);
+      backdrop-filter: blur(18px);
+      animation: fadeUp .55s ease both;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+    }
+
+    .brand-icon, .icon {
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--cyan), var(--violet), var(--pink));
+      box-shadow: 0 14px 36px rgba(129,140,248,.24);
+    }
+
+    .brand-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+    }
+
+    .topbar-note { color: var(--muted2); font-size: 13px; }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.12fr .88fr;
+      gap: 32px;
+      align-items: center;
+      padding-top: 52px;
+    }
+
+    .hero-copy { animation: fadeUp .7s .08s ease both; }
+
+    .pill {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 15px;
+      overflow: hidden;
+      border: 1px solid rgba(34,211,238,.22);
+      border-radius: 999px;
+      background: rgba(34,211,238,.10);
+      color: #cffafe;
       font-size: 14px;
       backdrop-filter: blur(16px);
     }
 
+    .pill::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      width: 45%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.20), transparent);
+      animation: shine 3.2s ease-in-out infinite;
+    }
+
     h1 {
-      margin: 18px 0 0;
-      font-size: clamp(40px, 7vw, 68px);
-      line-height: 1.04;
-      letter-spacing: -.055em;
+      margin: 20px 0 0;
+      font-size: clamp(52px, 9vw, 92px);
+      line-height: .98;
+      letter-spacing: -.07em;
+      font-weight: 950;
     }
 
     .grad {
-      background: linear-gradient(90deg, var(--sky), var(--violet), var(--pink));
+      display: block;
+      background: linear-gradient(90deg, var(--cyan), var(--violet), var(--pink));
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
+      filter: drop-shadow(0 16px 38px rgba(129,140,248,.16));
     }
 
     .lead {
-      max-width: 680px;
-      margin: 22px 0 0;
+      max-width: 700px;
+      margin: 24px 0 0;
       color: var(--muted);
-      font-size: 18px;
+      font-size: clamp(17px, 2vw, 21px);
     }
 
     .tags {
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 10px;
-      margin-top: 24px;
+      margin-top: 26px;
+      max-width: 650px;
     }
 
     .tags span {
-      padding: 8px 13px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.08);
+      padding: 10px 13px;
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 18px;
+      background: rgba(255,255,255,.07);
       color: var(--muted);
       font-size: 14px;
+      text-align: center;
+      backdrop-filter: blur(12px);
+      transition: transform .18s ease, background .18s ease;
     }
 
+    .tags span:hover { transform: translateY(-2px); background: rgba(255,255,255,.10); }
+
     .card {
+      position: relative;
       border: 1px solid var(--line);
-      border-radius: 28px;
+      border-radius: 30px;
       background: var(--card);
       box-shadow: var(--shadow);
       backdrop-filter: blur(22px);
     }
 
-    .progress-card { padding: 24px; }
+    .progress-card {
+      overflow: hidden;
+      padding: 26px;
+      animation: fadeUp .7s .18s ease both, pulseGlow 4s ease-in-out infinite;
+    }
 
-    .progress-top {
+    .progress-card::before, .result-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--cyan), var(--violet), var(--pink));
+    }
+
+    .progress-top, .result-head, .q-head {
       display: flex;
       gap: 14px;
-      align-items: center;
+      align-items: flex-start;
     }
 
     .icon {
-      width: 48px;
-      height: 48px;
+      flex: none;
+      width: 50px;
+      height: 50px;
       border-radius: 18px;
-      display: grid;
-      place-items: center;
-      background: linear-gradient(135deg, var(--sky), var(--violet), var(--pink));
-      box-shadow: 0 12px 30px rgba(56,189,248,.16);
+      animation: gentleTilt 5s ease-in-out infinite;
+    }
+
+    @keyframes gentleTilt {
+      0%, 100% { transform: rotate(0deg); }
+      35% { transform: rotate(4deg); }
+      70% { transform: rotate(-4deg); }
     }
 
     .small { color: var(--muted2); font-size: 14px; }
-    .percent { font-size: 28px; font-weight: 800; }
+    .percent { font-size: 32px; font-weight: 950; }
 
     .bar {
       height: 12px;
-      margin-top: 20px;
+      margin-top: 22px;
       overflow: hidden;
       border-radius: 999px;
       background: rgba(255,255,255,.11);
@@ -143,8 +254,8 @@
       height: 100%;
       width: 0%;
       border-radius: inherit;
-      background: linear-gradient(90deg, var(--sky), var(--violet), var(--pink));
-      transition: width .35s ease;
+      background: linear-gradient(90deg, var(--cyan), var(--violet), var(--pink));
+      transition: width .42s cubic-bezier(.22, 1, .36, 1);
     }
 
     .notice {
@@ -157,28 +268,31 @@
       font-size: 14px;
     }
 
-    main { padding: 18px 0 64px; }
+    main { padding: 18px 0 68px; }
+
+    #quiz, #result { scroll-margin-top: 18px; }
 
     .question {
       padding: 24px;
       margin: 18px 0;
+      animation: fadeUp .46s ease both;
+      transition: transform .2s ease, background .2s ease, border-color .2s ease;
     }
 
-    .q-head {
-      display: flex;
-      gap: 13px;
-      align-items: flex-start;
-      margin-bottom: 16px;
-    }
+    .question:nth-child(2) { animation-delay: .04s; }
+    .question:nth-child(3) { animation-delay: .08s; }
+    .question:nth-child(4) { animation-delay: .12s; }
+    .question:nth-child(5) { animation-delay: .16s; }
+    .question:hover { transform: translateY(-2px); border-color: rgba(34,211,238,.26); background: rgba(255,255,255,.09); }
 
     .num {
-      width: 38px;
-      height: 38px;
-      border-radius: 14px;
+      width: 40px;
+      height: 40px;
+      border-radius: 16px;
       display: grid;
       place-items: center;
       background: rgba(255,255,255,.10);
-      font-weight: 800;
+      font-weight: 900;
       flex: none;
     }
 
@@ -198,19 +312,21 @@
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 11px;
+      margin-top: 16px;
     }
 
     .option {
       width: 100%;
+      min-height: 56px;
       padding: 15px 16px;
       border: 1px solid var(--line);
-      border-radius: 18px;
+      border-radius: 19px;
       background: rgba(2,6,23,.44);
       color: var(--text);
       text-align: left;
       font: inherit;
       cursor: pointer;
-      transition: transform .16s ease, border-color .16s ease, background .16s ease;
+      transition: transform .16s ease, border-color .16s ease, background .16s ease, box-shadow .16s ease;
     }
 
     .option:hover {
@@ -219,10 +335,19 @@
       background: rgba(255,255,255,.10);
     }
 
+    .option:active { transform: scale(.985); }
+
     .option.active {
-      border-color: rgba(125,211,252,.86);
-      background: rgba(56,189,248,.15);
-      box-shadow: 0 0 0 4px rgba(56,189,248,.07);
+      border-color: rgba(103,232,249,.90);
+      background: rgba(34,211,238,.15);
+      box-shadow: 0 0 0 4px rgba(34,211,238,.07), 0 16px 44px rgba(0,0,0,.18);
+    }
+
+    .option.active::after {
+      content: " ✓";
+      float: right;
+      color: #a5f3fc;
+      font-weight: 900;
     }
 
     .actions {
@@ -230,22 +355,27 @@
       flex-wrap: wrap;
       gap: 12px;
       margin-top: 24px;
+      animation: fadeUp .55s .1s ease both;
     }
 
     button.primary, button.secondary {
-      height: 48px;
-      padding: 0 20px;
-      border-radius: 17px;
+      height: 50px;
+      padding: 0 22px;
+      border-radius: 18px;
       font: inherit;
-      font-weight: 800;
+      font-weight: 900;
       cursor: pointer;
+      transition: transform .16s ease, opacity .16s ease, box-shadow .16s ease;
     }
+
+    button:hover:not(:disabled) { transform: translateY(-1px); }
+    button:active:not(:disabled) { transform: scale(.985); }
 
     .primary {
       border: none;
       color: white;
-      background: linear-gradient(90deg, var(--sky), var(--violet), var(--pink));
-      box-shadow: 0 14px 40px rgba(129,140,248,.22);
+      background: linear-gradient(90deg, var(--cyan), var(--violet), var(--pink));
+      box-shadow: 0 16px 46px rgba(129,140,248,.24);
     }
 
     .primary:disabled {
@@ -260,13 +390,10 @@
       background: rgba(255,255,255,.06);
     }
 
-    .result { padding: 30px; }
-
-    .result-head {
-      display: flex;
-      gap: 14px;
-      align-items: center;
-      margin-bottom: 24px;
+    .result-card {
+      overflow: hidden;
+      padding: 30px;
+      animation: fadeUp .5s ease both;
     }
 
     .eyebrow {
@@ -278,16 +405,17 @@
     }
 
     .result-title {
-      margin: 2px 0 0;
-      font-size: clamp(26px, 5vw, 38px);
-      line-height: 1.16;
-      letter-spacing: -.035em;
+      margin: 3px 0 0;
+      font-size: clamp(26px, 5vw, 40px);
+      line-height: 1.15;
+      letter-spacing: -.04em;
     }
 
     .spectrum-box {
+      margin-top: 26px;
       padding: 20px;
       border: 1px solid var(--line);
-      border-radius: 24px;
+      border-radius: 25px;
       background: rgba(2,6,23,.42);
     }
 
@@ -295,7 +423,7 @@
       display: flex;
       justify-content: space-between;
       gap: 10px;
-      margin-bottom: 12px;
+      margin-bottom: 13px;
       color: var(--muted2);
       font-size: 12px;
     }
@@ -304,7 +432,7 @@
       position: relative;
       height: 20px;
       border-radius: 999px;
-      background: linear-gradient(90deg, #38bdf8, #a78bfa, #f0abfc);
+      background: linear-gradient(90deg, #22d3ee, #a78bfa, #f0abfc);
     }
 
     .dot {
@@ -316,10 +444,12 @@
       border: 4px solid white;
       border-radius: 50%;
       background: #0f172a;
-      transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%) scale(.8);
       box-shadow: 0 12px 30px rgba(0,0,0,.35);
-      transition: left .55s cubic-bezier(.22, 1, .36, 1);
+      transition: left .7s cubic-bezier(.22, 1, .36, 1), transform .4s ease;
     }
+
+    .dot.ready { transform: translate(-50%, -50%) scale(1); }
 
     .result-copy {
       margin-top: 20px;
@@ -352,8 +482,11 @@
       border: 1px solid var(--line);
       border-radius: 20px;
       background: rgba(2,6,23,.35);
+      animation: fadeUp .5s ease both;
     }
 
+    .tip:nth-child(2) { animation-delay: .07s; }
+    .tip:nth-child(3) { animation-delay: .14s; }
     .tip h3 { margin: 0 0 8px; font-size: 16px; }
     .tip p { margin: 0; color: var(--muted2); font-size: 14px; }
 
@@ -365,30 +498,44 @@
       background: rgba(255,255,255,.05);
       color: var(--muted2);
       font-size: 14px;
+      animation: fadeUp .5s .12s ease both;
     }
 
-    .hidden { display: none; }
+    .hidden { display: none !important; }
 
-    @media (max-width: 820px) {
-      header { padding-top: 36px; }
-      .hero { grid-template-columns: 1fr; }
+    @media (max-width: 840px) {
+      header { padding-top: 20px; }
+      .topbar-note { display: none; }
+      .hero { grid-template-columns: 1fr; padding-top: 34px; }
+      .tags { grid-template-columns: 1fr 1fr; }
       .options { grid-template-columns: 1fr; }
       .tips { grid-template-columns: 1fr; }
       .spectrum-labels { font-size: 11px; }
+      .result-head { align-items: flex-start; }
     }
   </style>
 </head>
 <body>
+  <div class="blob one"></div>
+  <div class="blob two"></div>
+  <div class="blob three"></div>
+
   <header class="wrap">
+    <nav class="topbar" aria-label="页面说明">
+      <div class="brand"><span class="brand-icon">✨</span><span>性取向光谱测试</span></div>
+      <div class="topbar-note">匿名 · 无对错 · 仅供自我探索</div>
+    </nav>
+
     <section class="hero">
-      <div>
-        <div class="pill">✨ 性取向光谱自我探索</div>
-        <h1>不是给你下定义，<span class="grad">而是帮你看见自己的光谱位置。</span></h1>
-        <p class="lead">这个小测试用于帮助你理解浪漫吸引、亲密关系想象和标签舒适度。结果仅供自我反思，不是医学诊断，也不需要立刻告诉任何人。</p>
+      <div class="hero-copy">
+        <div class="pill">🧭 5 个问题，生成你的光谱倾向</div>
+        <h1>性取向<span class="grad">光谱测试</span></h1>
+        <p class="lead">通过心动对象、亲密关系想象和标签舒适度，帮你更清楚地理解自己在性取向光谱上的大致位置。</p>
         <div class="tags">
-          <span>匿名</span><span>无对错</span><span>可随时重测</span><span>结果仅供参考</span>
+          <span>不是诊断</span><span>不会评判</span><span>可以重测</span>
         </div>
       </div>
+
       <aside class="card progress-card" aria-label="测试进度">
         <div class="progress-top">
           <div class="icon">🧭</div>
@@ -398,21 +545,21 @@
           </div>
         </div>
         <div class="bar"><div id="progressBar"></div></div>
-        <div class="notice">你可以只把它当成一个“自我观察工具”。没有任何结果比你的真实感受更权威。</div>
+        <div class="notice">这个测试只用于自我探索。你不需要立刻贴标签，也不需要向任何人证明自己。</div>
       </aside>
     </section>
   </header>
 
   <main class="wrap">
-    <section id="quiz"></section>
+    <section id="quiz" aria-label="测试题目"></section>
 
     <div class="actions" id="quizActions">
-      <button class="primary" id="showResult" disabled>查看光谱结果</button>
+      <button class="primary" id="showResult" disabled>查看结果 →</button>
       <button class="secondary" id="resetA">重新开始</button>
     </div>
 
-    <section id="result" class="hidden">
-      <div class="card result">
+    <section id="result" class="hidden" aria-label="测试结果">
+      <div class="card result-card">
         <div class="result-head">
           <div class="icon">💗</div>
           <div>
@@ -473,6 +620,7 @@
     const showResultButton = document.getElementById("showResult");
     const resultSection = document.getElementById("result");
     const quizActions = document.getElementById("quizActions");
+    const dot = document.getElementById("dot");
 
     function getResult(avg, aceScore) {
       if (aceScore >= 3) return { name: "可能更接近：低吸引 / 无性恋或灰性恋光谱", tag: "Asexual / Gray-asexual spectrum", position: 50, description: "你选择了较多“很少心动、不确定、不太想进入亲密关系”的选项。这不代表你一定属于某个标签，但可以了解无性恋、灰性恋、浪漫取向等概念。" };
@@ -515,6 +663,20 @@
       });
     }
 
+    function scrollToResultStart() {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          resultSection.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      });
+    }
+
+    function scrollToQuizStart() {
+      requestAnimationFrame(() => {
+        quiz.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    }
+
     function showResult() {
       const selected = Object.values(answers);
       const score = selected.reduce((sum, item) => sum + item.value, 0);
@@ -525,12 +687,18 @@
       document.getElementById("resultName").textContent = result.name;
       document.getElementById("resultTag").textContent = result.tag;
       document.getElementById("resultDescription").textContent = result.description;
-      document.getElementById("dot").style.left = result.position + "%";
+      dot.classList.remove("ready");
+      dot.style.left = "50%";
 
       quiz.classList.add("hidden");
       quizActions.classList.add("hidden");
       resultSection.classList.remove("hidden");
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      scrollToResultStart();
+
+      setTimeout(() => {
+        dot.style.left = result.position + "%";
+        dot.classList.add("ready");
+      }, 260);
     }
 
     function reset() {
@@ -540,7 +708,7 @@
       quizActions.classList.remove("hidden");
       renderQuiz();
       updateProgress();
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      scrollToQuizStart();
     }
 
     showResultButton.addEventListener("click", showResult);
@@ -550,7 +718,7 @@
       resultSection.classList.add("hidden");
       quiz.classList.remove("hidden");
       quizActions.classList.remove("hidden");
-      window.scrollTo({ top: quiz.offsetTop - 20, behavior: "smooth" });
+      scrollToQuizStart();
     });
 
     renderQuiz();
