@@ -1,13 +1,21 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 import time
+import webbrowser
+
+
+INSPIRATION_LINKS = [
+    ("GitHub · study timer examples", "https://github.com/search?q=study+timer+app&type=repositories"),
+    ("Dribbble · pomodoro app UI", "https://dribbble.com/search/pomodoro%20app"),
+    ("Behance · study planner app", "https://www.behance.net/search/projects?search=study%20planner%20app"),
+]
 
 
 class StudyTimerApp:
     def __init__(self, root: tk.Tk):
         self.root = root
         self.root.title("Daily Study Timer")
-        self.root.geometry("560x620")
+        self.root.geometry("620x760")
         self.root.resizable(False, False)
         self.root.configure(bg="#F5F5F7")
 
@@ -26,8 +34,14 @@ class StudyTimerApp:
         self.timer_job = None
         self.day_stamp = time.strftime("%Y-%m-%d")
 
+        self.inspiration_enabled = tk.BooleanVar(value=True)
+        self.inspiration_hour = 14
+        self.last_inspiration_day = ""
+        self.inspiration_job = None
+
         self._build_ui()
         self._refresh_labels()
+        self._schedule_inspiration_check()
 
     def _configure_styles(self):
         self.style.configure("Card.TFrame", background="#FFFFFF")
@@ -42,14 +56,11 @@ class StudyTimerApp:
         self.style.map("Secondary.TButton", background=[("active", "#D8D8DE")])
 
     def _build_ui(self):
-        header = ttk.Frame(self.root, style="Card.TFrame")
-        header.place(x=20, y=20, width=520, height=90)
-
         ttk.Label(self.root, text="学习节奏助手", style="Title.TLabel").place(x=28, y=30)
         ttk.Label(self.root, text="苹果风格 · 每日目标 + 学习/休息循环", style="SubTitle.TLabel").place(x=30, y=70)
 
         self.timer_card = ttk.Frame(self.root, style="Card.TFrame")
-        self.timer_card.place(x=20, y=120, width=520, height=210)
+        self.timer_card.place(x=20, y=120, width=580, height=210)
 
         ttk.Label(self.timer_card, text="当前倒计时", style="CardTitle.TLabel").place(x=22, y=18)
         self.timer_text = ttk.Label(self.timer_card, text="00:00", style="CardValue.TLabel")
@@ -66,23 +77,41 @@ class StudyTimerApp:
         ttk.Button(self.timer_card, text="重置", style="Secondary.TButton", command=self.reset_session).place(x=242, y=164, width=90, height=34)
 
         settings_card = ttk.Frame(self.root, style="Card.TFrame")
-        settings_card.place(x=20, y=344, width=520, height=250)
+        settings_card.place(x=20, y=344, width=580, height=180)
 
         ttk.Label(settings_card, text="参数设置", style="CardTitle.TLabel").place(x=22, y=16)
 
         ttk.Label(settings_card, text="每日学习目标（分钟）", style="Body.TLabel").place(x=24, y=56)
         self.goal_var = tk.StringVar(value=str(self.daily_goal_minutes))
-        ttk.Entry(settings_card, textvariable=self.goal_var).place(x=240, y=56, width=250, height=30)
+        ttk.Entry(settings_card, textvariable=self.goal_var).place(x=280, y=56, width=280, height=30)
 
         ttk.Label(settings_card, text="单次学习时长（分钟）", style="Body.TLabel").place(x=24, y=100)
         self.study_var = tk.StringVar(value=str(self.study_minutes))
-        ttk.Entry(settings_card, textvariable=self.study_var).place(x=240, y=100, width=250, height=30)
+        ttk.Entry(settings_card, textvariable=self.study_var).place(x=280, y=100, width=280, height=30)
 
         ttk.Label(settings_card, text="休息时长（分钟）", style="Body.TLabel").place(x=24, y=144)
         self.break_var = tk.StringVar(value=str(self.break_minutes))
-        ttk.Entry(settings_card, textvariable=self.break_var).place(x=240, y=144, width=250, height=30)
+        ttk.Entry(settings_card, textvariable=self.break_var).place(x=280, y=144, width=280, height=30)
 
-        ttk.Button(settings_card, text="保存设置", style="Primary.TButton", command=self.save_settings).place(x=24, y=196, width=110, height=34)
+        ttk.Button(self.root, text="保存设置", style="Primary.TButton", command=self.save_settings).place(x=44, y=536, width=110, height=34)
+
+        inspiration_card = ttk.Frame(self.root, style="Card.TFrame")
+        inspiration_card.place(x=20, y=582, width=580, height=160)
+
+        ttk.Label(inspiration_card, text="每日 14:00 灵感学习", style="CardTitle.TLabel").place(x=22, y=16)
+        ttk.Label(inspiration_card, text="到点后提醒你去 GitHub / Dribbble / Behance 学习案例并优化页面。", style="Body.TLabel").place(x=24, y=44)
+
+        ttk.Checkbutton(
+            inspiration_card,
+            text="启用每日两点提醒",
+            variable=self.inspiration_enabled,
+            command=self._on_inspiration_toggle,
+        ).place(x=22, y=74)
+
+        ttk.Button(inspiration_card, text="打开灵感站点", style="Secondary.TButton", command=self.open_inspiration_sites).place(x=24, y=110, width=130, height=32)
+
+    def _on_inspiration_toggle(self):
+        self._schedule_inspiration_check()
 
     def save_settings(self):
         try:
@@ -149,6 +178,28 @@ class StudyTimerApp:
 
         self._refresh_labels()
         self.timer_job = self.root.after(1000, self._tick)
+
+    def open_inspiration_sites(self):
+        for _, url in INSPIRATION_LINKS:
+            webbrowser.open_new_tab(url)
+
+    def _check_inspiration_time(self):
+        if self.inspiration_enabled.get():
+            now = time.localtime()
+            today = time.strftime("%Y-%m-%d", now)
+            if now.tm_hour == self.inspiration_hour and today != self.last_inspiration_day:
+                self.last_inspiration_day = today
+                messagebox.showinfo(
+                    "14:00 灵感学习时间",
+                    "现在是每天两点，请去 GitHub 等平台学习案例并优化你的 APP。",
+                )
+        self._schedule_inspiration_check()
+
+    def _schedule_inspiration_check(self):
+        if self.inspiration_job:
+            self.root.after_cancel(self.inspiration_job)
+            self.inspiration_job = None
+        self.inspiration_job = self.root.after(30_000, self._check_inspiration_time)
 
     def _sync_new_day(self):
         current_day = time.strftime("%Y-%m-%d")
