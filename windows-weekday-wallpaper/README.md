@@ -5,7 +5,7 @@
 ## 文件说明
 
 - `Set-WeekdayWallpaper.ps1`：根据当天是周几（周一到周五）自动切换对应壁纸。
-- `Install-WeekdayWallpaperTask.ps1`：一键创建 Windows 计划任务（每天 08:00 执行一次）。
+- `Install-WeekdayWallpaperTask.ps1`：一键创建 Windows 计划任务（默认每天 **06:30** 执行一次，且电脑开机时也会执行）。
 
 ## 壁纸文件准备
 
@@ -34,16 +34,12 @@ Set-ExecutionPolicy -Scope Process Bypass
 .\Set-WeekdayWallpaper.ps1
 ```
 
-## 修改执行时间
+## 自定义每天执行时间（可选）
 
-如果你想改成每天 7:30 执行，把 `Install-WeekdayWallpaperTask.ps1` 里的：
-
-```powershell
-New-ScheduledTaskTrigger -Daily -At 08:00AM
-```
-
-改为：
+例如改成每天 07:00：
 
 ```powershell
-New-ScheduledTaskTrigger -Daily -At 07:30AM
+.\Install-WeekdayWallpaperTask.ps1 -DailyTime "07:00"
 ```
+
+> 无论你设置几点，脚本都会保留“开机时执行”这个触发器。
