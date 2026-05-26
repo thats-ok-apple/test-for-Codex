@@ -2,8 +2,12 @@ name: Daily CodeX Curation
 
 on:
   schedule:
+    # 定时任务：每天 UTC 02:00 触发（北京时间 10:00）
     - cron: "0 2 * * *"
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   curate:

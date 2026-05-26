@@ -9,6 +9,12 @@
 3. 运行 `python3 codex-research/scripts/generate_weekly_digest.py` 生成周报草稿。
 4. 提交到 GitHub。
 
+## 定时任务确认
+
+- 已配置 GitHub Actions 定时触发：`.github/workflows/daily-codex-curation.yml`
+- `cron: "0 2 * * *"` 表示 **每天 UTC 02:00** 自动执行一次（即北京时间每天 10:00）
+- 也支持手动触发：`workflow_dispatch`
+
 ## 推荐检索关键词
 
 - `CodeX 教程`
